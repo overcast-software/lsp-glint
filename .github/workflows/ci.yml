@@ -32,20 +32,27 @@ jobs:
             --eval "(add-to-list 'package-archives '(\"melpa\" . \"https://melpa.org/packages/\"))" \
             --eval "(package-initialize)" \
             --eval "(package-refresh-contents)" \
-            --eval "(package-install 'lsp-mode)" \
+            --eval "(unless (package-installed-p 'lsp-mode) (package-install 'lsp-mode))"
+
+      - name: Generate autoloads
+        run: |
+          emacs -Q --batch -L . \
+            --eval "(require 'package)" \
+            --eval "(require 'autoload)" \
+            --eval "(setq generated-autoload-file \"autoloads.el\")" \
+            -f batch-update-autoloads .
 
       - name: Byte compile package
         run: |
-          emacs -Q --batch \
-          -L . \
-          -l deps.el \
-          -l lsp-glint.el \
-          -l glint-ts-mode.el \
-          -f batch-byte-compile *.el
+          emacs -Q --batch -L . \
+            -L "$HOME/.emacs.d/elpa/lsp-mode-*/" \
+            -l lsp-glint.el \
+            -l glint-ts-mode.el \
+            -f batch-byte-compile *.el
 
       - name: Check autoloads
         run: |
-          emacs -Q --batch \
-            -L . \
+          emacs -Q --batch -L . \
+            --eval "(require 'autoload)" \
             --eval "(setq generated-autoload-file \"autoloads.el\")" \
             -f batch-update-autoloads .
