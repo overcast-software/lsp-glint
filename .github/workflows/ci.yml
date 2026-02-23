@@ -37,10 +37,11 @@ jobs:
       - name: Byte compile package
         run: |
           emacs -Q --batch \
-            -L . \
-            -l lsp-glint.el \
-            -l glint-ts-mode.el \
-            -f batch-byte-compile *.el
+          -L . \
+          -l deps.el \
+          -l lsp-glint.el \
+          -l glint-ts-mode.el \
+          -f batch-byte-compile *.el
 
       - name: Check autoloads
         run: |
