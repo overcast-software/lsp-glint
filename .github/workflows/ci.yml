@@ -44,8 +44,12 @@ jobs:
 
       - name: Byte compile package
         run: |
-          emacs -Q --batch -L . \
-            -L "$HOME/.emacs.d/elpa/lsp-mode-*/" \
+          emacs -Q --batch \
+            --eval "(require 'package)" \
+            --eval "(add-to-list 'package-archives '(\"melpa\" . \"https://melpa.org/packages/\"))" \
+            --eval "(package-initialize)" \
+            --eval "(unless (package-installed-p 'lsp-mode) (package-refresh-contents) (package-install 'lsp-mode))" \
+            -L . \
             -l lsp-glint.el \
             -l glint-ts-mode.el \
             -f batch-byte-compile *.el
